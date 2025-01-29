@@ -1,29 +1,28 @@
 #pragma once
 
-#include "../include/ConnectionHandler.h"
 #include <string>
+#include <vector>
 #include <map>
 #include <sstream>
+#include "ConnectionHandler.h"
+#include "event.h"
 
 class StompProtocol {
 private:
     ConnectionHandler& handler;
+    std::vector<Event> receivedEvents;  // Stores received events
+    bool loggedIn;  // Tracks if user is logged in
 
-    // Helper methods for processing frames
     void handleMessageFrame(std::istringstream& stream);
     void handleReceiptFrame(std::istringstream& stream);
     void handleErrorFrame(std::istringstream& stream);
 
-    // Helper to construct a STOMP frame
-    std::string createFrame(const std::string& command, const std::map<std::string, std::string>& headers, const std::string& body);
-
 public:
-    // Constructor
-    explicit StompProtocol(ConnectionHandler& handler);
-
-    // Process an incoming frame
+    StompProtocol(ConnectionHandler& handler);
+    
     void processServerFrame(const std::string& frame);
-
-    // Send a frame to the server
     void sendFrame(const std::string& command, const std::map<std::string, std::string>& headers, const std::string& body);
+    
+    bool isLoggedIn() const;  
+    const std::vector<Event>& getReceivedEvents() const;  
 };

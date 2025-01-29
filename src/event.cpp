@@ -143,11 +143,41 @@ names_and_events parseEventsFile(std::string json_path)
     return events_and_names;
 }
 
+// Added methods:
+
 void split_str(const std::string &str, char delimiter, std::vector<std::string> &result) {
     std::stringstream ss(str);
     std::string item;
     while (std::getline(ss, item, delimiter)) {
         result.push_back(item);
     }
+}  
+
+#include <ctime> 
+
+std::string Event::toString() const {
+    std::ostringstream oss;
+    
+    // Convert time to a normal format
+    time_t epochTime = static_cast<time_t>(date_time);
+    struct tm* timeInfo = localtime(&epochTime);
+    char timeBuffer[20];
+    strftime(timeBuffer, sizeof(timeBuffer), "%d/%m/%Y %H:%M", timeInfo);
+    
+    oss << "city: " << city << "\n"
+        << "event name: " << name << "\n"
+        << "date time: " << timeBuffer << "\n"  
+        << "general information:\n";
+
+    for (const auto& info : general_information) {
+        oss << info.first << ": " << info.second << "\n";
+    }
+
+    oss << "description:\n" << description;
+    
+    return oss.str();
 }
+
+
+
 

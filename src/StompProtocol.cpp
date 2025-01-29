@@ -1,10 +1,14 @@
 #include "../include/StompProtocol.h"
 #include <sstream>
-#include <iostream>
 #include <map>
 
-StompProtocol::StompProtocol(ConnectionHandler& handler) : handler(handler) {}
+StompProtocol::StompProtocol(ConnectionHandler& handler) : handler(handler), loggedIn(false) {}
 
+bool StompProtocol::isLoggedIn() const {
+    return loggedIn;
+}
+
+// Creates a properly formatted STOMP frame
 std::string StompProtocol::createFrame(const std::string& command, const std::map<std::string, std::string>& headers, const std::string& body) {
     std::ostringstream frame;
     frame << command << "\n";
@@ -15,46 +19,74 @@ std::string StompProtocol::createFrame(const std::string& command, const std::ma
     return frame.str();
 }
 
+// Processes incoming STOMP frames from the server
 void StompProtocol::processServerFrame(const std::string& frame) {
     std::istringstream stream(frame);
     std::string command;
     std::getline(stream, command);
 
     if (command == "CONNECTED") {
-        std::cout << "Connection successful." << std::endl;
-    }
+        loggedIn = true;
+    } 
     else if (command == "MESSAGE") {
         handleMessageFrame(stream);
-    }
+    } 
     else if (command == "RECEIPT") {
         handleReceiptFrame(stream);
-    }
+    } 
     else if (command == "ERROR") {
         handleErrorFrame(stream);
     }
 }
 
+// Handles incoming MESSAGE frames (event notifications)
 void StompProtocol::handleMessageFrame(std::istringstream& stream) {
-    std::cout << "Message received from server:" << std::endl;
+    std::string messageBody;
     std::string line;
+
     while (std::getline(stream, line)) {
-        std::cout << line << std::endl;
+        messageBody += line + "\n";  // Construct the full message body
     }
+
+    // Convert STOMP message body into an Event object
+    Event receivedEvent(messageBody);
+
+    // Store the event for later use (summary generation, filtering, etc.)
+    receivedEvents.push_back(receivedEvent);
 }
 
+// Handles RECEIPT frames (acknowledgment of sent frames)
 void StompProtocol::handleReceiptFrame(std::istringstream& stream) {
-    std::cout << "Receipt acknowledged by server." << std::endl;
-}
+    std::string receiptId;
+    std::getline(stream, receiptId);
 
-void StompProtocol::handleErrorFrame(std::istringstream& stream) {
-    std::cerr << "Error frame received from server:" << std::endl;
-    std::string line;
-    while (std::getline(stream, line)) {
-        std::cerr << line << std::endl;
+    if (receiptId.find("logout-receipt") != std::string::npos) {
+        loggedIn = false;
+        handler.close();  // Properly close connection
+        std::cout << "Logout successful" << std::endl;
+        exit(0);  // Only exit after logout receipt is received
     }
 }
 
+// Handles ERROR frames
+void StompProtocol::handleErrorFrame(std::istringstream& stream) {
+    std::string errorMessage;
+    std::string line;
+    
+    while (std::getline(stream, line)) {
+        errorMessage += line + "\n";
+    }
+
+    std::cerr << "STOMP Error: " << errorMessage << std::endl;
+}
+
+// Sends a STOMP frame to the server
 void StompProtocol::sendFrame(const std::string& command, const std::map<std::string, std::string>& headers, const std::string& body) {
     std::string frame = createFrame(command, headers, body);
     handler.sendFrameAscii(frame, '\0');
+}
+
+// Getter for received events
+const std::vector<Event>& StompProtocol::getReceivedEvents() const {
+    return receivedEvents;
 }
