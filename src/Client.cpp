@@ -1,8 +1,7 @@
 
 #include "Client.h"
 
-Client::Client(std::string address, int port) 
-    : serverAddress(address), port(port), sockfd(-1), running(false) {}
+Client::Client(std::string address, int port, StompProtocol& protocol) : serverAddress(address), port(port), sockfd(-1), running(false), protocol(protocol), subscriptions(* new Subscriptions()) {}
 
 Client::~Client() {
     disconnect();
@@ -48,7 +47,7 @@ void Client::readUserInput() {
         std::getline(std::cin, line);
         if (line.empty()) continue;
 
-        Command cmd(line, *this);
+        Command cmd(line, protocol, subscriptions);
         cmd.execute();
 
         if (line == "logout") {  
@@ -70,9 +69,9 @@ void Client::receiveMessages() {
             running = false;
             break;
         }
-
         std::string response(buffer);
-        stompProtocol.processServerFrame(response);
+        protocol.processServerFrame(response);
+    }
 }
 
 
@@ -99,3 +98,4 @@ void Client::disconnect() {
         std::cout << "Disconnected from server." << std::endl;
     }
 }
+

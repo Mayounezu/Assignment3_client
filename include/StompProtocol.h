@@ -22,7 +22,8 @@ public:
     
     void processServerFrame(const std::string& frame);
     void sendFrame(const std::string& command, const std::map<std::string, std::string>& headers, const std::string& body);
-    
+    std::string createFrame(const std::string& command, const std::map<std::string, std::string>& headers, const std::string& body);
+
     bool isLoggedIn() const;  
     const std::vector<Event>& getReceivedEvents() const;  
 };

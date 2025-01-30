@@ -26,12 +26,14 @@ private:
     std::atomic<bool> running;   // Tracks if the client is still running
     std::queue<std::string> messageQueue;
     std::condition_variable cv;
+    StompProtocol& protocol;
+    Subscriptions subscriptions;
 
     void readUserInput();         // Reads commands from std::cin
     void receiveMessages();       // Reads responses from server
 
 public:
-    Client(std::string address, int port);
+    Client(std::string address, int port, StompProtocol& protocol);
     ~Client();
 
     bool connectToServer();

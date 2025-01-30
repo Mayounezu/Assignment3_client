@@ -20,6 +20,7 @@ private:
     std::string commandName;
     std::vector<std::string> commandArgs;
     StompProtocol& stompProtocol;
+    Subscriptions subscriptions;
 
     // Private methods for handling commands
     void handleLoginCommand();
@@ -30,6 +31,6 @@ private:
     void handleLogoutCommand();
 
 public:
-    Command(const std::string& line, StompProtocol& protocol);
+    Command(const std::string& line, StompProtocol& protocol, Subscriptions& subscriptions);
     void execute();
 };

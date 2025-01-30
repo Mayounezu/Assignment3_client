@@ -82,7 +82,7 @@ void StompProtocol::handleErrorFrame(std::istringstream& stream) {
 
 // Sends a STOMP frame to the server
 void StompProtocol::sendFrame(const std::string& command, const std::map<std::string, std::string>& headers, const std::string& body) {
-    std::string frame = createFrame(command, headers, body);
+    std::string frame = StompProtocol::createFrame(command, headers, body);
     handler.sendFrameAscii(frame, '\0');
 }
 

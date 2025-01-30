@@ -1,18 +1,32 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/alpine
 {
-	"name": "Alpine",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/base:alpine-3.20"
+	"name": "SPL-Ubuntu",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+		// Add the IDs of extensions you want installed when the container is created.
+		"extensions": [
+			"ms-vscode.cpptools-extension-pack",
+			"vscode-icons-team.vscode-icons",
+			"2gua.rainbow-brackets",
+			"vscjava.vscode-java-pack",
+			"jeff-hykin.better-cpp-syntax", 
+			"ms-vscode.makefile-tools",
+			"ms-python.python",
+			"natqe.reload",
+			"cschlosser.doxdocgen",
+			"ms-vsliveshare.vsliveshare"
+		],
+		// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
+		"runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"],
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
+	// Features to add to the dev container. More info: https://containers.dev/implementors/features.
 	// "features": {},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "uname -a",
+	// "postCreateCommand": "gcc -v",
 
 	// Configure tool-specific properties.
 	// "customizations": {},

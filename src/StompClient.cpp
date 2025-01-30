@@ -15,7 +15,10 @@ int main(int argc, char *argv[]) {
         std::string serverAddress = argv[1];
         int port = std::stoi(argv[2]);
 
-        Client client(serverAddress, port);
+        ConnectionHandler* handler = new ConnectionHandler(serverAddress, port);
+        StompProtocol* protocol = new StompProtocol(*handler);
+
+        Client client(serverAddress, port, *protocol);
         client.start();  // Start client execution (connects to server, spawns threads)
 
     } catch (const std::exception &e) {

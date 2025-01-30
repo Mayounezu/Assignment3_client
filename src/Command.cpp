@@ -2,8 +2,8 @@
 #include "event.h"
 #include "StompProtocol.h"
 
-Command::Command(const std::string& line, StompProtocol& protocol) 
-    : stompProtocol(protocol) {
+Command::Command(const std::string& line, StompProtocol& protocol, Subscriptions& subscriptions) 
+    : stompProtocol(protocol), subscriptions(subscriptions) {
     std::istringstream iss(line);
     iss >> commandName;
     std::string arg;

@@ -7,8 +7,8 @@ BIN_DIR := bin
 
 all: StompEMIClient
 
-StompEMIClient: bin/ConnectionHandler.o bin/Client.o bin/Command.o bin/StompProtocol.o bin/event.o bin/Subscriptions.o bin/StompedClient.o
-	g++ -o bin/StompEMIClient bin/ConnectionHandler.o bin/Client.o bin/Command.o bin/StompProtocol.o bin/event.o bin/Subscriptions.o bin/StompedClient.o $(LDFLAGS)
+StompEMIClient: bin/ConnectionHandler.o bin/Client.o bin/Command.o bin/StompProtocol.o bin/event.o bin/Subscriptions.o bin/StompClient.o
+	g++ -o bin/StompEMIClient bin/ConnectionHandler.o bin/Client.o bin/Command.o bin/StompProtocol.o bin/event.o bin/Subscriptions.o bin/StompClient.o $(LDFLAGS)
 
 bin/ConnectionHandler.o: src/ConnectionHandler.cpp
 	g++ $(CFLAGS) -o bin/ConnectionHandler.o src/ConnectionHandler.cpp
@@ -28,8 +28,8 @@ bin/event.o: src/event.cpp
 bin/Subscriptions.o: src/Subscriptions.cpp
 	g++ $(CFLAGS) -o bin/Subscriptions.o src/Subscriptions.cpp
 
-bin/StompedClient.o: src/StompedClient.cpp
-	g++ $(CFLAGS) -o bin/StompedClient.o src/StompedClient.cpp
+bin/StompClient.o: src/StompClient.cpp
+	g++ $(CFLAGS) -o bin/StompClient.o src/StompClient.cpp
 
 .PHONY: clean
 clean:
